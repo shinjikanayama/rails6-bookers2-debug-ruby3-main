@@ -3,9 +3,9 @@
   <div class='row'>
     <div class='col-md-3'>
       <h2>User info</h2>
-      <%= render 'users/info', user: current_user %>
+      <%= render 'users/info', user: @book.user %>
       <h2 class="mt-3">New book</h2>
-      <%= render 'form', user: @user %>
+      <%= render 'books/form', book: @book_new %>
     </div>
     <div class='col-md-8 offset-md-1'>
   		<h2>Book detail</h2>
@@ -18,12 +18,59 @@
           </td>
           <td><%= link_to @book.title %></td>
           <td><%= @book.body %></td>
-          <% if @book.user == current_user %>
+
+                  <!--いいね追加-->
+         <% if @book.favorited_by?(current_user) %>
+         <td>
+           <%= link_to book_favorites_path(@book), method: :delete do %>
+            ♥<%= @book.favorites.count %>
+           <% end %>
+         </td>
+           <% else %>
+         <td>
+           <%= link_to book_favorites_path(@book), method: :post do %>
+            ♡<%= @book.favorites.count %>
+           <% end %>
+         </td>
+         <% end %>
+
+          <!--コメント追加-->
+          <td>コメント数：<%= @book.book_comments.count %></td>
+
+           <% if @book.user == current_user %>
             <td><%= link_to 'Edit', edit_book_path(@book), class: "btn btn-sm btn-success" %></td>
             <td><%= link_to 'Destroy', @book, method: :delete, data: { confirm: '本当に消しますか？' }, class: "btn btn-sm btn-danger"%></td>
+           <% end %>
+        </tr>
+
+        <tr>
+          <% @book.book_comments.each do |book_comment| %>
+          <td>
+            <%= image_tag book_comment.user.get_profile_image, size:"100x100" %><br>
+            <%= book_comment.user.name %>
+          </td>
+          <td><%= book_comment.comment %></td>
+          <td>
+            <% if book_comment.user == current_user %>
+            <td><%= link_to 'Destroy', book_book_comment_path(@book, book_comment), method: :delete, class: "btn btn-sm btn-danger"%></td>
+            <% end %>
+          </td>
           <% end %>
         </tr>
       </table>
+      <table>
+        <tr>
+          <td>
+            <%= form_with model: [@book, @book_comment] do |f| %>
+            <%= f.text_area :comment, rows: '4', cols: '50' %><br>
+            <%= f.submit "送信" %>
+            <% end %>
+          </td>
+        </tr>
+      </table>
+
+
+
     </div>
   </div>
 </div>
