@@ -1,3 +1,5 @@
+<div class='container'>
+
 <% if user_signed_in? %>
 <div class="search_form">
   <%= form_with url: search_path, local: true, method: :get do |f| %>
@@ -8,3 +10,5 @@
     <% end %>
   </div>
 <% end %>
+
+</div>
